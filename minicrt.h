@@ -13,7 +13,7 @@ extern "C"
 void free(void* ptr);
 void* malloc(unsigned size);
 static int brk(void* end_data_segment);
-int mini_crt_init_heap();
+int mini_crt_heap_init();
 
 // 字符串
 char* itoa(int n, char* str, int radix);
@@ -36,7 +36,7 @@ typedef int FILE;
 #define stderr	((FILE*)2)
 #endif
 
-int mini_crt_init_io();
+int mini_crt_io_init();
 FILE* fopen(const char* filename, const char* mode);
 int fread(void* buffer, int size, int count, FILE* stream);
 int fwrite(const void* buffer, int size, int count, FILE* stream);
@@ -47,7 +47,7 @@ int fseek(FILE* fp, int offset, int set);
 int fputc(int c,FILE* stream);
 int fputs(const char* str, FILE* stream);
 int printf(const char* format, ...);
-int fprint(FILE* stream, const char* format, ...)
+int fprint(FILE* stream, const char* format, ...);
 
 // internal 
 void do_global_ctors();

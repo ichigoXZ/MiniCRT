@@ -78,7 +78,7 @@ int vfprintf(FILE* stream, const char* format, va_list arglist)
 			default:
 				if(translating)
 					translating = 0;
-				if(fputc(*p), stream < 0)
+				if(fputc(*p, stream) < 0)
 					return EOF;
 				else
 					++ret;

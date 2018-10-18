@@ -22,7 +22,7 @@ char* itoa(int n, char* str, int radix)
 
 	while(n)
 	{
-		*p++ = digit[n % radix]
+		*p++ = digit[n % radix];
 		n /= radix;
 	}
 	*p = 0;
@@ -56,7 +56,7 @@ char* strcpy(char* dst, const char* src)
 	char* ret = dst;
 	while(*src)
 		*dst++ = *src++;
-	*dest = '\0';
+	*dst = '\0';
 	return ret;
 }
 

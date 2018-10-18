@@ -130,7 +130,7 @@ static int seek(int fd, int offset, int mode)
     return ret;
 }
 
-FILE* fopen(const cahr *filename, const char* mode)
+FILE* fopen(const char *filename, const char* mode)
 {
 	int fd = -1;
 	int flags = 0;
@@ -165,7 +165,7 @@ int fread(void* buffer, int size, int count, FILE* stream)
 	return read((int)stream, buffer, size * count);
 }
 
-int fwrite(void *buffer, int size, int count, FILE *stream)
+int fwrite(const void *buffer, int size, int count, FILE *stream)
 {
     return write((int)stream, buffer, size * count);
 }

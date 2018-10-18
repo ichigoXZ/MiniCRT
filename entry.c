@@ -50,7 +50,7 @@ void mini_crt_entry(void)
 	// ebp_reg = %ebp;
 	asm("mov %%ebp, %0 \n" : "=r" (ebp_reg));  //'='指定ebp_reg输出操作数, r指定将ebp_reg存储在寄存器中
 
-	argc = *(ini*)(ebp_reg + 4);
+	argc = *(int*)(ebp_reg + 4);
 	argv = (char**)(ebp_reg + 8);
 
 #endif
@@ -67,7 +67,7 @@ void mini_crt_entry(void)
 void exit(int exitCode)
 {
 	// mini_crt_call_exit_routine();
-#ifdef
+#ifdef WIN32
 	ExitProcess(exitCode);
 #else
 	asm( "movl %0, %%ebx \n\t"

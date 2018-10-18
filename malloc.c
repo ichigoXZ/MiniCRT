@@ -29,7 +29,7 @@ void free(void* ptr)
 	if(header->prev != NULL && header->prev->type == HEAP_BLOCK_FREE) {  // 向前合并
 		// merge
 		header->prev->next = header->next;
-		if(header->next != NULL).
+		if(header->next != NULL)
 			header->next->prev = header->prev;
 		header->prev->size += header->size;
 
@@ -128,7 +128,7 @@ int mini_crt_heap_init()
 	header->size = heap_size;
 	header->type = HEAP_BLOCK_FREE;
 	header->next = NULL;
-	heaper->prev = NULL;
+	header->prev = NULL;
 
 	list_head = header;
 	return 1;
