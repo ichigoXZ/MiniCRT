@@ -9,7 +9,7 @@ typedef struct _heap_header
 		HEAP_BLOCK_USED = 0xCDCDCDCD,  // magic number of used block
 	} type;							// block type FREE/USED
 
-	unsigned size;					// block size including header
+	unsigned int size;					// block size including header
 	struct _heap_header* next;
 	struct _heap_header* prev;
 } heaper_header;
@@ -17,7 +17,8 @@ typedef struct _heap_header
 #define ADDR_ADD(a, o) (((char*)(a)) + o)
 #define HEADER_SIZE (sizeof(heaper_header))
 
-static heaper_header* list_head = NULL;
+// static heaper_header* list_head = NULL;
+static heaper_header* list_head = 0x804c000;
 
 void free(void* ptr)
 {
@@ -71,7 +72,7 @@ void* malloc(unsigned size)
 			next->prev = header;
 			next->next = header->next;
 			next->type = HEAP_BLOCK_FREE;
-			next->size = header->size - (size - HEADER_SIZE);  // size包含指针的大小
+			next->size = header->size - (size + HEADER_SIZE);  // 书中为减
 			header->next = next;
 			header->size = size + HEADER_SIZE;
 			header->type = HEAP_BLOCK_USED;
@@ -91,7 +92,7 @@ static int brk(void* end_data_segment) {
 	// brk system call number: 45
 	// in /usr/include/x86_64-linux-gnu/asm/unistd_32.h
 	// in unistd_64.h call number is 12
-	asm( "movl $45, %%eax	\n\t"
+	__asm__ volatile( "movl $45, %%eax	\n\t"
 		 "movl %1, %%ebx	\n\t"
 		 "int $0x80			\n\t"
 		 "movl %%eax, %0	\n\t"
@@ -108,7 +109,7 @@ int mini_crt_heap_init()
 	void* base = NULL;
 	heaper_header* header = NULL;
 	// 32 MB heap size
-	unsigned heap_size = 1024 * 1024 * 32;
+	unsigned int heap_size = 1024 * 1024 * 32;
 
 #ifdef WIN32
 	base = VirtualAlloc(0, heap_size, MEM_COMMIT |
@@ -130,6 +131,6 @@ int mini_crt_heap_init()
 	header->next = NULL;
 	header->prev = NULL;
 
-	list_head = header;
+	// list_head = header;
 	return 1;
 }

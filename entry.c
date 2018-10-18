@@ -72,6 +72,7 @@ void exit(int exitCode)
 #else
 	asm( "movl %0, %%ebx \n\t"
 		 "movl $1, %%eax \n\t"
+		 "int $0x80		 \n\t"
 		 "hlt            \n\t"::"m"(exitCode));  //m：内存操作数约束
 #endif
 }
