@@ -16,9 +16,7 @@ in gdb:
 set args argv1 argv2
 r
 ```
-直接运行会出现段错误
- int fprintf(FILE* stream, const char* format, ...) 
-#int fprintf(FILE* stream, const char* format, ...)  
+直接运行会出现段错误   
 
 ### 注意  
 malloc.c中
@@ -29,7 +27,7 @@ list_head = header;
   
 ### report  
 fclose后参数传递出错，即
-```
+```c
 printf("Hey!\n");
 -->
 int printf(const char* format, ...)
