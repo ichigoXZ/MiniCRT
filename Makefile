@@ -18,4 +18,4 @@ test: entry.o test.o minicrt.a
 	ld -static -e mini_crt_entry -m elf_i386 $^ -o $@
 
 clean:
-	rm *.o minicrt.a test
+	rm *.o minicrt.a test test.c

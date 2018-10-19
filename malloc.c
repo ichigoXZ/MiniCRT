@@ -131,6 +131,7 @@ int mini_crt_heap_init()
 	header->next = NULL;
 	header->prev = NULL;
 
+	// it goes segment fault when try this
 	// list_head = header;
 	return 1;
 }
