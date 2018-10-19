@@ -3,13 +3,31 @@
 # -fno-stack-protector: 关闭堆栈保护功能
 # -m32: force 32-bit ABI
 CFLAGS=-ggdb -fno-builtin -nostdlib -fno-stack-protector -m32
-OBJS=entry.o malloc.o fprintf.o stdio.o string.o
+# -fno-rtti: 关闭RTTI即运行时类型识别
+# -fno-exceptions: 关闭异常支持
+CPPFLAGS=-ggdb -nostdinc++ -fno-rtti -fno-exceptions -fno-builtin -nostdlib -fpermissive
+OBJS=entry.o malloc.o fprintf.o stdio.o atexit.o
+OBJSCPP=ctors.o crtbegin.o crtend.o new_delete.o sysdep.o String.o iostream.o
 
-minicrt.a: $(OBJS)
-	ar -rs minicrt.a $(OBJS)
 
-$(OBJS): %o:%c 
+FLAGS=CPP
+ifeq ($(FLAGS), CPP)
+	OBJA=$(OBJS) $(OBJSCPP)
+else
+	OBJA=$(OBJS)
+endif
+
+minicrt.a: $(OBJA)
+	ar -rs minicrt.a $(OBJSCPP) $(OBJS)
+
+# minicrt.a: $(OBJS)
+# 	ar -rs minicrt.a $(OBJS)
+
+$(OBJS): %.o:%.c 
 	gcc -c $(CFLAGS) $<
+
+$(OBJSCPP): %.o:%.cpp
+	g++ -c $(CPPFLAGS) $<
 
 test.o: test.c
 	gcc -c $(CFLAGS) test.c
@@ -17,5 +35,11 @@ test.o: test.c
 test: entry.o test.o minicrt.a
 	ld -static -e mini_crt_entry -m elf_i386 $^ -o $@
 
+test_cpp.o: test_cpp.cpp
+	g++ -c $(CPPFLAGS) test_cpp.cpp
+
+test_cpp: entry.o crtbegin.o test_cpp.o minicrt.a crtend.o
+	ld -static -e mini_crt_entry $^ -o $@
+
 clean:
-	rm *.o minicrt.a test test.c
+	rm *.o minicrt.a test test.txt test_cpp
