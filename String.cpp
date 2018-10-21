@@ -2,10 +2,12 @@
 #include "iostream.h"
 
 namespace std {
-	string::string(const char* str):
+	string::string(const char* s):
 		len(0), pbuf(0)
 	{
-		*this = pbuf;
+		this->~string();
+		len = strlen(s);
+		pbuf = strcpy(new char[len+1], s);
 	}
 
 	string::string(const string& s):
@@ -67,6 +69,6 @@ namespace std {
 
 	ofstream& operator<<(ofstream& o, const string& s)
 	{
-		return o << s.c_str();
+		o << s.c_str();
 	}
 }

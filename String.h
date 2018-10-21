@@ -3,6 +3,8 @@
 
 namespace std {
 
+	class ofstream;
+
 	class string
 	{
 		unsigned len;
@@ -19,6 +21,7 @@ namespace std {
 		const char* c_str() const;
 		unsigned length() const;
 		unsigned size() const;
+		friend ofstream& operator<<(ofstream& o, const string& s);
 	};
 }
 

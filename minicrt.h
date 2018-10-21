@@ -47,7 +47,7 @@ int fseek(FILE* fp, int offset, int set);
 int fputc(int c,FILE* stream);
 int fputs(const char* str, FILE* stream);
 int printf(const char* format, ...);
-int fprint(FILE* stream, const char* format, ...);
+int fprintf(FILE* stream, const char* format, ...);
 
 // internal 
 void do_global_ctors();

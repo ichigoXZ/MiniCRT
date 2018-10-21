@@ -6,15 +6,15 @@ CFLAGS=-ggdb -fno-builtin -nostdlib -fno-stack-protector -m32
 # -fno-rtti: 关闭RTTI即运行时类型识别
 # -fno-exceptions: 关闭异常支持
 CPPFLAGS=-ggdb -nostdinc++ -fno-rtti -fno-exceptions -fno-builtin -nostdlib -fpermissive -m32
-OBJS=entry.o malloc.o fprintf.o stdio.o
-OBJSCPP=ctors.o crtbegin.o crtend.o new_delete.o sysdep.o String.o iostream.o
+OBJS=entry.o malloc.o stdio.o string.o printf.o 
+OBJSCPP=ctors.o crtbegin.o crtend.o new_delete.o sysdep.o iostream.o String.o
 
 
 FLAGS=CPP
 ifeq ($(FLAGS), CPP)
 	OBJA=$(OBJS) atexit.o $(OBJSCPP)
 else
-	OBJA=$(OBJS) string.o
+	OBJA=$(OBJS)
 endif
 
 minicrt.a: $(OBJA)
@@ -23,7 +23,7 @@ minicrt.a: $(OBJA)
 # minicrt.a: $(OBJS)
 # 	ar -rs minicrt.a $(OBJS)
 
-$(OBJS) string.o atexit.o: %.o:%.c 
+$(OBJS) atexit.o: %.o:%.c 
 	gcc -c $(CFLAGS) $<
 
 
@@ -40,7 +40,7 @@ test_cpp.o: test_cpp.cpp
 	g++ -c $(CPPFLAGS) test_cpp.cpp
 
 test_cpp: entry.o crtbegin.o test_cpp.o minicrt.a crtend.o
-	ld -static -e mini_crt_entry $^ -o $@
+	ld -static -e mini_crt_entry -m elf_i386 $^ -o test
 
 clean:
-	rm *.o minicrt.a test test.txt test_cpp
+	rm *.o minicrt.a test test.txt
