@@ -2,11 +2,9 @@
 
 运行库实现 —— 《程序员的自我修养——链接、装载与库》 
     
-:worried:  
   
-___2018-10-19___
-## CRT - C runtime library  
-
+## CRT - C runtime library    
+___2018-10-19___ &nbsp; :worried: 
 ### 使用：  
 ```shell
 make clean
@@ -38,10 +36,9 @@ format为错误字符串
   
 可以正常打开文件并读**或**写  
   
-:no_mouth:  
-
-___2018-10-21___
+  
 ## CRT++ - C++ runtime library  
+___2018-10-21___ &nbsp; :no_mouth: 
 ### 使用：  
 ```shell
 make clean
@@ -56,3 +53,5 @@ r
 
 ### 注意  
 同上
+  
+ 
