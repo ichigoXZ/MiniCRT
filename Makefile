@@ -5,26 +5,27 @@
 CFLAGS=-ggdb -fno-builtin -nostdlib -fno-stack-protector -m32
 # -fno-rtti: 关闭RTTI即运行时类型识别
 # -fno-exceptions: 关闭异常支持
-CPPFLAGS=-ggdb -nostdinc++ -fno-rtti -fno-exceptions -fno-builtin -nostdlib -fpermissive
-OBJS=entry.o malloc.o fprintf.o stdio.o atexit.o
+CPPFLAGS=-ggdb -nostdinc++ -fno-rtti -fno-exceptions -fno-builtin -nostdlib -fpermissive -m32
+OBJS=entry.o malloc.o fprintf.o stdio.o
 OBJSCPP=ctors.o crtbegin.o crtend.o new_delete.o sysdep.o String.o iostream.o
 
 
 FLAGS=CPP
 ifeq ($(FLAGS), CPP)
-	OBJA=$(OBJS) $(OBJSCPP)
+	OBJA=$(OBJS) atexit.o $(OBJSCPP)
 else
-	OBJA=$(OBJS)
+	OBJA=$(OBJS) string.o
 endif
 
 minicrt.a: $(OBJA)
-	ar -rs minicrt.a $(OBJSCPP) $(OBJS)
+	ar -rs minicrt.a $(OBJA)
 
 # minicrt.a: $(OBJS)
 # 	ar -rs minicrt.a $(OBJS)
 
-$(OBJS): %.o:%.c 
+$(OBJS) string.o atexit.o: %.o:%.c 
 	gcc -c $(CFLAGS) $<
+
 
 $(OBJSCPP): %.o:%.cpp
 	g++ -c $(CPPFLAGS) $<
