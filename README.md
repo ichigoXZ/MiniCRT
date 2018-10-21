@@ -5,6 +5,8 @@
 :worried:  
   
 ___2018-10-19___
+## CRT - C runtime library  
+
 ### 使用：  
 ```shell
 make clean
@@ -34,4 +36,23 @@ int printf(const char* format, ...)
 ```
 format为错误字符串
   
-可以正常打开文件并读**或**写
+可以正常打开文件并读**或**写  
+  
+:no_mouth:  
+
+___2018-10-21___
+## CRT++ - C++ runtime library  
+### 使用：  
+```shell
+make clean
+make test FLAGS=CPP
+gdb test
+```
+in gdb:
+```shell
+r
+```
+直接运行会出现段错误   
+
+### 注意  
+同上
