@@ -2,12 +2,10 @@
 #include "iostream.h"
 
 namespace std {
-	string::string(const char* s):
+	string::string(const char* str):
 		len(0), pbuf(0)
 	{
-		this->~string();
-		len = strlen(s);
-		pbuf = strcpy(new char[len+1], s);
+		*this = str;
 	}
 
 	string::string(const string& s):

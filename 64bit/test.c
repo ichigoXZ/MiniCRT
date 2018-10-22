@@ -22,7 +22,6 @@ int main(int argc, char* argv[])
 	}
 	fclose(fp);
 
-	printf("Read in file:\n");
 	fp = fopen("test.txt", "r");
 	for(i=1; i<argc; ++i) {
 		int len = strlen(v[i]);
