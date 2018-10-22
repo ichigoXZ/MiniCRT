@@ -34,13 +34,17 @@ namespace std {
 
 	ofstream& ofstream::operator<<(int n)
 	{
-		fprintf(fp, "%d", n);
+		// fprintf(fp, "%d", n);
+		char buf[16];
+		itoa(n, buf, 10);
+		fputc(buf, fp);
 		return *this;
 	}
 
 	ofstream& ofstream::operator<<(const char* str)
 	{
-		fprintf(fp, "%s", str);
+		// fprintf(fp, "%s", str);
+		fputs(str, fp);
 		return *this;
 	}
 
