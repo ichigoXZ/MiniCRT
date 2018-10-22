@@ -1,57 +1,30 @@
 # MiniCRT  
 
 运行库实现 —— 《程序员的自我修养——链接、装载与库》 
+&nbsp; :blush: 
     
   
 ## CRT - C runtime library    
-___2018-10-19___ &nbsp; :worried: 
 ### 使用：  
 ```shell
 make clean
 make test
-gdb test
-```
-in gdb:
-```shell
-set args argv1 argv2
-r
-```
-直接运行会出现段错误   
+test argv1 argv2
+```  
 
-### 注意  
-malloc.c中
-```c
-list_head = header;
-```
-会出现段错误，所以自行初始值
-  
-### report  
-fclose后参数传递出错，即
-```c
-printf("Hey!\n");
--->
-int printf(const char* format, ...)
-```
-format为错误字符串
-  
-可以正常打开文件并读**或**写  
   
   
 ## CRT++ - C++ runtime library  
-___2018-10-21___ &nbsp; :no_mouth: 
 ### 使用：  
 ```shell
 make clean
 make test FLAGS=CPP
-gdb test
+test
 ```
-in gdb:
-```shell
-r
-```
-直接运行会出现段错误   
 
-### 注意  
-同上
+
+### report  
+64位下C++的变长参数处理不正确，fprinf出错，ofstream类中用fputc和fpucs输出
+32位到62位的修改主要是寄存器由int变为long,所以需要修改一些定义和内联汇编指令，以及argc、argv的获取等
   
- 
+
