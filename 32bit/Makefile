@@ -9,38 +9,39 @@ CPPFLAGS=-ggdb -nostdinc++ -fno-rtti -fno-exceptions -fno-builtin -nostdlib -fpe
 OBJS=entry.o malloc.o stdio.o string.o printf.o 
 OBJSCPP=ctors.o crtbegin.o crtend.o new_delete.o sysdep.o iostream.o String.o
 
+FLAGS=C
 
-FLAGS=CPP
 ifeq ($(FLAGS), CPP)
 	OBJA=$(OBJS) atexit.o $(OBJSCPP)
+	TARGET=entry.o crtbegin.o test_cpp.o minicrt.a crtend.o
 else
 	OBJA=$(OBJS)
+	TARGET=entry.o test.o minicrt.a
 endif
+
 
 minicrt.a: $(OBJA)
 	ar -rs minicrt.a $(OBJA)
 
-# minicrt.a: $(OBJS)
-# 	ar -rs minicrt.a $(OBJS)
 
 $(OBJS) atexit.o: %.o:%.c 
 	gcc -c $(CFLAGS) $<
 
-
 $(OBJSCPP): %.o:%.cpp
 	g++ -c $(CPPFLAGS) $<
+
 
 test.o: test.c
 	gcc -c $(CFLAGS) test.c
 
-test: entry.o test.o minicrt.a
-	ld -static -e mini_crt_entry -m elf_i386 $^ -o $@
-
 test_cpp.o: test_cpp.cpp
 	g++ -c $(CPPFLAGS) test_cpp.cpp
 
-test_cpp: entry.o crtbegin.o test_cpp.o minicrt.a crtend.o
-	ld -static -e mini_crt_entry -m elf_i386 $^ -o test
+
+test: $(TARGET)
+	ld -static -e mini_crt_entry -m elf_i386 $^ -o $@
+
 
 clean:
-	rm *.o minicrt.a test test.txt
+	if [ -f test.txt ] ; then rm test.txt ; fi 
+	rm *.o minicrt.a test

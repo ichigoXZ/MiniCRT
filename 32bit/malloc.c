@@ -17,8 +17,8 @@ typedef struct _heap_header
 #define ADDR_ADD(a, o) (((char*)(a)) + o)
 #define HEADER_SIZE (sizeof(heaper_header))
 
-// static heaper_header* list_head = NULL;
-static heaper_header* list_head = 0x804c000;
+static heaper_header* list_head = NULL;
+// static heaper_header* list_head = 0x804c000;
 
 void free(void* ptr)
 {
@@ -132,6 +132,6 @@ int mini_crt_heap_init()
 	header->prev = NULL;
 
 	// it goes segment fault when try this
-	// list_head = header;
+	list_head = header;
 	return 1;
 }
