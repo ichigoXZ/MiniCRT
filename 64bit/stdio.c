@@ -1,6 +1,6 @@
 #include "minicrt.h"
 
-int mini_crt_io_init(){
+long mini_crt_io_init(){
 	return 1;
 }
 
@@ -10,8 +10,8 @@ int mini_crt_io_init(){
 FILE* fopen(const char* filename, const char* mode)
 {
 	HANDLE hFile = 0;
-	int access = 0;
-	int creation = 0;
+	long access = 0;
+	long creation = 0;
 
 	if(strcmp(mode, "w") == 0) {
 		access |= GENERIC_WRITE;
@@ -40,101 +40,101 @@ FILE* fopen(const char* filename, const char* mode)
 	return (FILE*)hFile;
 }
 
-int fread(void* buffer, int size, int count ,FILE* stream)
+long fread(void* buffer,long size,long count,FILE* stream)
 {
-	int read = 0;
+	long read = 0;
 	if(!ReadFile((HANDLE)stream, buffer, size * count, &read, 0))
 		return 0;
 	return read;
 }
 
-int fwrite(const void* buffer, int size, int count ,FILE* stream)
+long fwrite(const void* buffer,long size,long count,FILE* stream)
 {
-	int written = 0;
+	long written = 0;
 	if(!WriteFile((HANDLE)stream, buffer, size * count, &written, 0))
 		return 0;
 	return written;
 }
 
-int fclose(FILE *fp)
+long fclose(FILE *fp)
 {
 	return CloseHandle((HANDLE)fp);
 }
 
-int fseek(FILE* fp, int offset, int set)
+long fseek(FILE* fp,long offset,long set)
 {
 	return SetFilePointer((HANDLE)fp, offset, 0, set);
 }
 
 #else
 
-static int open(const char *pathname, int flags, int mode)
+static long open(const char* filename,long flags,long mode)
 {
-	int fd = 0;
-	asm("movl $5, %%eax   \n\t"		// 在unistd_32.h中调用号为5,这里都是按32位的方式
-        "movl %1, %%ebx   \n\t"
-        "movl %2, %%ecx   \n\t"
-        "movl %3, %%edx   \n\t"
+	long fd = 0;
+	asm("movq $5, %%rax   \n\t"		
+        "movq %1, %%rbx   \n\t"
+        "movq %2, %%rcx   \n\t"
+        "movq %3, %%rdx   \n\t"
         "int $0x80   \n\t"
-        "movl %%eax, %0   \n\t" :
-        "=m"(fd) : "m"(pathname), "m"(flags), "m"(mode));
+        "movq %%rax, %0   \n\t" :
+        "=m"(fd) : "m"(filename), "m"(flags), "m"(mode));
 }
 
-static int read(int fd, void *buffer, unsigned size)
+static long read(long fd,void* buffer,unsigned long size)
 {
-    int ret = 0;
-    asm("movl $3, %%eax   \n\t"
-        "movl %1, %%ebx   \n\t"
-        "movl %2, %%ecx   \n\t"
-        "movl %3, %%edx   \n\t"
+    long ret = 0;
+    asm("movq $3, %%rax   \n\t"
+        "movq %1, %%rbx   \n\t"
+        "movq %2, %%rcx   \n\t"
+        "movq %3, %%rdx   \n\t"
         "int $0x80   \n\t"
-        "movl %%eax, %0   \n\t" :
+        "movq %%rax, %0   \n\t" :
         "=m"(ret) : "m"(fd), "m"(buffer), "m"(size));
     return ret;
 }
 
-static int write(int fd, const void *buffer, unsigned size)
+long write(long fd,const void* buffer,unsigned long size)
 {
-    int ret = 0;
-    asm("movl $4, %%eax   \n\t"
-        "movl %1, %%ebx   \n\t"
-        "movl %2, %%ecx   \n\t"
-        "movl %3, %%edx   \n\t"
+    long ret = 0;
+    asm("movq $4, %%rax   \n\t"
+        "movq %1, %%rbx   \n\t"
+        "movq %2, %%rcx   \n\t"
+        "movq %3, %%rdx   \n\t"
         "int $0x80   \n\t"
-        "mov %%eax, %0   \n\t" :
+        "movq %%rax, %0   \n\t" :
         "=m"(ret) : "m"(fd), "m"(buffer), "m"(size));
     return ret;
 }
 
-static int close(int fd)
+static long close(long fd)
 {
-    int ret = 0;
-    asm("movl $6, %%eax   \n\t"
-        "movl %1, %%ebx   \n\t"
+    long ret = 0;
+    asm("movq $6, %%rax   \n\t"
+        "movq %1, %%rbx   \n\t"
         "int $0x80   \n\t"
-        "movl %%eax, %0   \n\t" :
+        "movq %%rax, %0   \n\t" :
         "=m"(ret) : "m"(fd));
     return ret;
 }
 
-static int seek(int fd, int offset, int mode)
+static long seek(long fd,long offset,long mode)
 {
-    int ret = 0;
-    asm("movl $19, %%eax   \n\t"
-        "movl %1, %%ebx   \n\t"
-        "movl %2, %%ecx   \n\t"
-        "movl %3, %%edx   \n\t"
+    long ret = 0;
+    asm("movq $19, %%rax   \n\t"
+        "movq %1, %%rbx   \n\t"
+        "movq %2, %%rcx   \n\t"
+        "movq %3, %%rdx   \n\t"
         "int $0x80   \n\t"
-        "movl %%eax, %0   \n\t" :
+        "movq %%rax, %0   \n\t" :
         "=m"(ret) : "m"(fd), "m"(offset), "m"(mode));
     return ret;
 }
 
 FILE* fopen(const char *filename, const char* mode)
 {
-	int fd = -1;
-	int flags = 0;
-	int access = 00700;		// 创建文件的权限
+	long fd = -1;
+	long flags = 0;
+	long access = 00700;		// 创建文件的权限
 
 // 来自于 /usr/include/asm-generic/fcntl.h
 #define  O_RDONLY  00
@@ -160,24 +160,24 @@ FILE* fopen(const char *filename, const char* mode)
 	return (FILE*)fd;
 }
 
-int fread(void* buffer, int size, int count, FILE* stream)
+long fread(void* buffer,long size,long count,FILE* stream)
 {
-	return read((int)stream, buffer, size * count);
+	return read((long)stream, buffer, size * count);
 }
 
-int fwrite(const void *buffer, int size, int count, FILE *stream)
+long fwrite(const void* buffer,long size,long count,FILE* stream)
 {
-    return write((int)stream, buffer, size * count);
+    return write((long)stream, buffer, size * count);
 }
 
-int fclose(FILE *fp)
+long fclose(FILE *fp)
 {
-    return close((int)fp);
+	return close((long)fp);
 }
 
-int fseek(FILE *fp, int offset, int set)
+long fseek(FILE* fp,long offset,long set)
 {
-    return seek((int)fp, offset, set);
+	return seek((long)fp,offset,set);
 }
 
 #endif

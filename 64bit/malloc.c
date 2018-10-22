@@ -18,7 +18,6 @@ typedef struct _heap_header
 #define HEADER_SIZE (sizeof(heaper_header))
 
 static heaper_header* list_head = NULL;
-// static heaper_header* list_head = 0x804c000;
 
 void free(void* ptr)
 {
@@ -44,7 +43,7 @@ void free(void* ptr)
 	}
 }
 
-void* malloc(unsigned size)
+void* malloc(unsigned long size)
 {
 	heaper_header* header;
 
@@ -87,15 +86,16 @@ void* malloc(unsigned size)
 
 #ifndef WIN32
 // Linux brk system call
-static int brk(void* end_data_segment) {
-	int ret = 0;
+static long brk(void* end_data_segment) {
+	long ret = 0;
 	// brk system call number: 45
-	// in /usr/include/x86_64-linux-gnu/asm/unistd_32.h
-	// in unistd_64.h call number is 12
-	__asm__ volatile( "movl $45, %%eax	\n\t"
-		 "movl %1, %%ebx	\n\t"
+	// in /usr/include/x86_64-linux-gnu/asm/unistd.h
+	// #indef __i386__
+	// #	include <asm/unistd_32.h>
+	__asm__ volatile( "movq $45, %%rax	\n\t"
+		 "movq %1, %%rbx	\n\t"
 		 "int $0x80			\n\t"
-		 "movl %%eax, %0	\n\t"
+		 "movq %%rax, %0	\n\t"
 		 : "=r"(ret): "m"(end_data_segment));
 }
 #endif
@@ -104,7 +104,7 @@ static int brk(void* end_data_segment) {
 #include <Windows.h>
 #endif
 
-int mini_crt_heap_init()
+long mini_crt_heap_init()
 {
 	void* base = NULL;
 	heaper_header* header = NULL;
@@ -131,7 +131,6 @@ int mini_crt_heap_init()
 	header->next = NULL;
 	header->prev = NULL;
 
-	// it goes segment fault when try this
 	list_head = header;
 	return 1;
 }

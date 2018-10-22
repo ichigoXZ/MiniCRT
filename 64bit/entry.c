@@ -4,8 +4,8 @@
 #include <Windows.h>
 #endif
 
-extern int main(int argc, char* argv[]);
-void exit(int);
+extern int main(long agrc,char *argv[]);
+void exit(long);
 
 static void crt_fatal_error(const char* msg)
 {
@@ -15,11 +15,11 @@ static void crt_fatal_error(const char* msg)
 
 void mini_crt_entry(void)
 {
-	int ret;
+	long ret;
 
 #ifdef WIN32
-	int flag = 0;
-	int argc = 0;
+	long flag = 0;
+	long argc = 0;
 	char* argv[16];	//最多16个参数
 	char* c1 = GetCommandLineA();
 
@@ -48,7 +48,7 @@ void mini_crt_entry(void)
 
 	char* ebp_reg=0;
 	// ebp_reg = %ebp;
-	asm("mov %%ebp, %0 \n" : "=r" (ebp_reg));  //'='指定ebp_reg输出操作数, r指定将ebp_reg存储在寄存器中
+	asm("movq %%rbp, %0 \n" : "=r" (ebp_reg));  //'='指定ebp_reg输出操作数, r指定将ebp_reg存储在寄存器中
 
 	argc = *(int*)(ebp_reg + 4);
 	argv = (char**)(ebp_reg + 8);
@@ -68,7 +68,7 @@ void mini_crt_entry(void)
 	exit(ret);
 }
 
-void exit(int exitCode)
+void exit(long exitCode)
 {
 #ifdef __cplusplus
 	mini_crt_call_exit_routine();
@@ -77,8 +77,8 @@ void exit(int exitCode)
 #ifdef WIN32
 	ExitProcess(exitCode);
 #else
-	asm( "movl %0, %%ebx \n\t"
-		 "movl $1, %%eax \n\t"
+	asm( "movq %0, %%rbx \n\t"
+		 "movq $1, %%rax \n\t"
 		 "int $0x80		 \n\t"
 		 "hlt            \n\t"::"m"(exitCode));  //m：内存操作数约束
 #endif

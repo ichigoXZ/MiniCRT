@@ -1,4 +1,4 @@
-char* itoa(int n, char* str, int radix)
+char* itoa(long n, char* str, long radix)
 {
 	char digit[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	char* p = str;
@@ -36,10 +36,10 @@ char* itoa(int n, char* str, int radix)
 	return str;
 }
 
-int strcmp(const char* src, const char* dst)
+long strcmp(const char* src, const char* dst)
 {
-	int ret = 0;
-	unsigned char* p1 = (unsigned char*)src;  // ?
+	long ret = 0;
+	unsigned char* p1 = (unsigned char*)src;
 	unsigned char* p2 = (unsigned char*)dst;
 	while(!(ret = *p1 - *p2) && *p2)
 		++p1, ++p2;
@@ -60,9 +60,9 @@ char* strcpy(char* dst, const char* src)
 	return ret;
 }
 
-unsigned strlen(const char* str)
+unsigned long strlen(const char* str)
 {
-	int cnt = 0;
+	long cnt = 0;
 	if(!str)
 		return 0;
 	for(; *str != '\0'; ++str)

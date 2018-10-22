@@ -2,9 +2,26 @@
 
 int main(int argc, char* argv[])
 {
-	int i;
+	long i;
 	FILE* fp;
-	int len;
+	long len;
+
+	fp	= fopen("test.txt","w");
+	
+	{
+	  char* buf = "hello how are you \n";
+	  long len = strlen(buf);
+	  fwrite(buf ,1,len,fp);
+	  write(0,"c",1);
+	  printf("hello world\n");
+	  printf("%d  %s\n",len,buf);
+	}
+	
+	fclose(fp);
+
+
+
+	
 	char** v = malloc(argc * sizeof(char*));
 	for(i=1; i<argc; i++) {
 		v[i] = malloc(strlen(argv[i]) + 1);
@@ -15,17 +32,17 @@ int main(int argc, char* argv[])
 	
 	// After file I/O operation, printf cannot
 	// get the correct input(:=format)
-	fp = fopen("test.txt", "w");
-	for(i=1; i<argc; ++i) {
-		int len = strlen(v[i]);
-		fwrite(&len, 1, sizeof(int), fp);
-		fwrite(v[i], 1, len, fp);
-		free(v[i]);
-		// printf("success!\n");
-	}
-	free(v);
-	fclose(fp);
-	printf("success!\n");	
+	// fp = fopen("test.txt", "w");
+	// for(i=1; i<argc; ++i) {
+	// 	int len = strlen(v[i]);
+	// 	fwrite(&len, 1, sizeof(int), fp);
+	// 	fwrite(v[i], 1, len, fp);
+	// 	free(v[i]);
+	// 	// printf("success!\n");
+	// }
+	// free(v);
+	// fclose(fp);
+	// printf("success!\n");	
 	// fp = fopen("test.txt", "r");
 	// for(i=1; i<argc; ++i) {
 	// 	int len = strlen(v[i]);

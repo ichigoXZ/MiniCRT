@@ -40,7 +40,7 @@ int vfprintf(FILE* stream, const char* format, va_list arglist)
 					translating = 1;
 				else
 				{
-					if(fputs('%', stream) < 0)
+					if(fputc('%', stream) < 0)
 						return EOF;
 					++ret;
 					translating = 0;
@@ -56,9 +56,9 @@ int vfprintf(FILE* stream, const char* format, va_list arglist)
 						return EOF;
 					ret += strlen(buf);
 				}
-				else if(fputs('d', stream) < 0)
+				else if(fputc('d', stream) < 0)
 					return EOF;
-				else 
+				else
 					++ret;
 				break;
 			case 's':

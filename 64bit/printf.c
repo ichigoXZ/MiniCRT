@@ -1,18 +1,27 @@
 #include "minicrt.h"
 
-int fputc(int c, FILE *stream)
+static char __fputc_tmp_val__ = 0;
+long fputc(char c,FILE* stream)
 {
-	if(fwrite(&c, 1, 1, stream) != 1)
+	__fputc_tmp_val__ = c;
+	if (fwrite(&__fputc_tmp_val__,1,1,stream) != 1)
 		return EOF;
 	else
 		return c;
 }
 
-int fputs(const char* str, FILE* stream)
+static char __fputs_tmp_array__[256] = {0};
+static int __fputs_tmp_size__ = 256;
+long fputs(const char* str,FILE *stream)
 {
-	int len = strlen(str);
-	if(fwrite(str, 1, len, stream) != len)
+	long len = strlen(str);
+	if(len >= __fputs_tmp_size__)
 		return EOF;
+	strcpy( __fputs_tmp_array__,str );
+	if (fwrite(__fputs_tmp_array__,1,len,stream) != len)
+	{
+		return EOF;
+	}
 	else
 		return len;
 }
@@ -26,10 +35,10 @@ int fputs(const char* str, FILE* stream)
 #include <Windows.h>
 #endif
 
-int vfprintf(FILE* stream, const char* format, va_list arglist)
+static long vfprintf(FILE* stream, const char* format, va_list arglist)
 {
-	int translating = 0;
-	int ret = 0;
+	long translating = 0;
+	long ret = 0;
 	const char* p = 0;
 	for(p = format; *p != '\0'; ++p)
 	{
@@ -40,7 +49,7 @@ int vfprintf(FILE* stream, const char* format, va_list arglist)
 					translating = 1;
 				else
 				{
-					if(fputs('%', stream) < 0)
+					if(fputc('%', stream) < 0)
 						return EOF;
 					++ret;
 					translating = 0;
@@ -51,12 +60,12 @@ int vfprintf(FILE* stream, const char* format, va_list arglist)
 				{
 					char buf[16];
 					translating = 0;
-					itoa(va_arg(arglist, int), buf, 10);
+					itoa(va_arg(arglist, long), buf, 10);
 					if(fputs(buf, stream) < 0)
 						return EOF;
 					ret += strlen(buf);
 				}
-				else if(fputs('d', stream) < 0)
+				else if(fputc('d', stream) < 0)
 					return EOF;
 				else 
 					++ret;
@@ -88,16 +97,18 @@ int vfprintf(FILE* stream, const char* format, va_list arglist)
 	return ret;
 }
 
-int printf(const char* format, ...)
+long printf(const char* format, ...)
 {
-	va_list(arglist);
-	va_start(arglist, format);
-	return vfprintf(stdout, format, arglist);
+	char* arglist;
+	asm( "movq %%rbp,%0":"=r"(arglist) );
+	arglist -= 0xa8;
+	return vfprintf(stdout,format,arglist);
 }
 
-int fprintf(FILE* stream, const char* format, ...)
+long fprintf(FILE* stream, const char* format, ...)
 {
-	va_list(arglist);
-	va_start(arglist, format);
-	return vfprintf(stdout, format, arglist);
+	char* arglist;
+	asm( "movq %%rbp,%0":"=r"(arglist) );
+	arglist -= 0xa8;
+	return vfprintf(stream,format,arglist);
 }

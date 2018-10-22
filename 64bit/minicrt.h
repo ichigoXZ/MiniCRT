@@ -11,18 +11,18 @@ extern "C" {
 #endif
 
 void free(void* ptr);
-void* malloc(unsigned size);
-static int brk(void* end_data_segment);
-int mini_crt_heap_init();
+void* malloc(unsigned long size);
+static long brk(void* end_data_segment);
+long mini_crt_heap_init();
 
 // 字符串
-char* itoa(int n, char* str, int radix);
-int strcmp(const char* src, const char* dst);
-char* strcpy(char *dst, const char *src);
-unsigned strlen(const char* str);
+char* itoa(long n,char* str,long radix);
+long strcmp(const char* src, const char* dst);
+char* strcpy(char* dest, const char* src);
+unsigned long strlen(const char* str);
 
 // 文件与IO
-typedef int FILE;
+typedef long FILE;
 
 #define EOF (-1)
 
@@ -36,18 +36,21 @@ typedef int FILE;
 #define stderr	((FILE*)2)
 #endif
 
-int mini_crt_io_init();
-FILE* fopen(const char* filename, const char* mode);
-int fread(void* buffer, int size, int count, FILE* stream);
-int fwrite(const void* buffer, int size, int count, FILE* stream);
-int fclose(FILE* fp);
-int fseek(FILE* fp, int offset, int set);
+//int 0x80中断不能显示64位的地址，所以不能用栈
+long write(long fd,const void *buffer,unsigned long size);
 
-// printf
-int fputc(int c,FILE* stream);
-int fputs(const char* str, FILE* stream);
-int printf(const char* format, ...);
-int fprintf(FILE* stream, const char* format, ...);
+long mini_crt_io_init();
+FILE* fopen(const char *filename,const char* mode);
+long fread(void* buffer,long size,long count,FILE* stream);
+long fwrite(const void* buffer,long size,long count,FILE* stream);
+long fclose(FILE *fp);
+long fseek(FILE* fp,long offset,long set);
+
+//printf
+long fputc(char c,FILE* stream);
+long fputs(const char* str,FILE* stream);
+long printf(const char *format,...);
+long fprintf(FILE* stream,const char* format,...);
 
 // internal 
 void do_global_ctors();
@@ -55,7 +58,7 @@ void mini_crt_call_exit_routine();
 
 // atexit
 typedef void (*atexit_func_t)(void);
-int atexit(atexit_func_t func);
+long atexit(atexit_func_t func);
 
 #ifdef __cplusplus
 }
