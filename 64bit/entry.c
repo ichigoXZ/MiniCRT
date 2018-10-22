@@ -50,8 +50,8 @@ void mini_crt_entry(void)
 	// ebp_reg = %ebp;
 	asm("movq %%rbp, %0 \n" : "=r" (ebp_reg));  //'='指定ebp_reg输出操作数, r指定将ebp_reg存储在寄存器中
 
-	argc = *(int*)(ebp_reg + 4);
-	argv = (char**)(ebp_reg + 8);
+	argc = *(int*)(ebp_reg + 8);
+	argv = (char**)(ebp_reg + 16);
 
 #endif
 
