@@ -9,7 +9,7 @@
 ```shell
 make clean
 make test
-test argv1 argv2
+./test argv1 argv2
 ```  
 
   
@@ -19,7 +19,7 @@ test argv1 argv2
 ```shell
 make clean
 make test FLAGS=CPP
-test
+./test
 ```
 
 
